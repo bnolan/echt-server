@@ -89,6 +89,12 @@ arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
+async-hook@^1.0.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/async-hook/-/async-hook-1.7.1.tgz#dfc7d90236e45a8b04be7c1e8c81024b6bce9c2a"
+  dependencies:
+    stack-chain "^1.3.1"
+
 async@~1.5.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
@@ -1587,6 +1593,10 @@ sprintf@~0.1.3:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/sprintf/-/sprintf-0.1.5.tgz#8f83e39a9317c1a502cb7db8050e51c679f6edcf"
 
+stack-chain@^1.3.1, stack-chain@^1.3.5:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/stack-chain/-/stack-chain-1.3.7.tgz#d192c9ff4ea6a22c94c4dd459171e3f00cea1285"
+
 standard-engine@~5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/standard-engine/-/standard-engine-5.4.0.tgz#e0e86959ea0786425d3383e40c1bf70d2f985579"
@@ -1768,6 +1778,13 @@ topo@1.x.x:
   resolved "https://registry.yarnpkg.com/topo/-/topo-1.1.0.tgz#e9d751615d1bb87dc865db182fa1ca0a5ef536d5"
   dependencies:
     hoek "2.x.x"
+
+trace@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/trace/-/trace-2.4.1.tgz#d0d5cce3675feb5c137b82efac20a0f173a38825"
+  dependencies:
+    async-hook "^1.0.0"
+    stack-chain "^1.3.5"
 
 tryit@^1.0.1:
   version "1.0.3"
