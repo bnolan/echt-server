@@ -1,14 +1,13 @@
 # Echt
 
 Selfie app with face recognition.
-
-## Server
+Relies on https://github.com/bnolan/echt-client
 
 ### Installation
 
-In the `server/` folder, run `yarn`
+Run `yarn`
 
-### Usage
+## Usage
 
 You'll need to [configure AWS access credentials](https://claudiajs.com/tutorials/installing.html). In case you're not using the default profile,
 remember to set the `AWS_PROFILE` environment variable accordingly.
@@ -21,7 +20,7 @@ Get your [credentials from aws](https://942514019561.signin.aws.amazon.com/conso
  * `yarn run test`: Run unit tests
  * `yarn run logs`: View Lambda logs
 
-### Adding policies
+## Adding policies
 
 If you need to add a policy to the lambda:
 
@@ -33,29 +32,7 @@ To update:
     cd policies
     aws iam update-assume-role-policy --role-name test-executor --policy-name access-dynamodb --policy-document file://access-dynamodb.json
 
-## Client
-
-### Installation
-
-Globally install [react-native](https://facebook.github.io/react-native/docs/getting-started.html).
-
-In the `Echt/` folder, run `yarn`
-
-### Usage
-
- * `yarn run ios`: Build for iOS and run in simulator
-
-Adjust the server address in the `jsCodeLocation` variable in `ios/AppDelegate.m`
-if you want to run a local development server, rather than serving the JavaScript bundle from S3.
-Note that by default it's using [CodePush]
-
-At the moment, you need to adjust the `Build Setting > Development Team` assignments in XCode to get
-the app building (it's hardcoded to Ben's).
-
-  LC_ALL=C find ios/Echt.xcodeproj/* -type f -exec sed -i "" "s/DWB7DKRZ7D/Y9AF3JTNBU/g" {} \;
-  LC_ALL=C find ios/Echt/AppDelegate.m -type f -exec sed -i "" "s/10.0.0.136/192.168.1.14/g" {} \;
-
-### Code Push
+## Code Push
 
 We're using [Code Push](http://microsoft.github.io/code-push) to publish the React Native app files
 and have clients auto-update without going through app store updates. Get going via:
@@ -71,7 +48,7 @@ Code push has a `Staging` and `Production` stage. You can release to them via th
  * `yarn run release-prod`: [Promotes](http://microsoft.github.io/code-push/docs/cli.html#link-7)
    the `Staging` code to `Production`
 
-### Local Server
+## Local Server
 
 You can run a simple local copy of the Lambda commands via `yarn run server`.
 It'll use the ClaudiaJS proxying system to use locally executed handlers
