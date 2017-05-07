@@ -56,7 +56,7 @@ const resizeStub = {
   toInline: (buffer) => Promise.resolve('DECAFBAD')
 };
 
-const signUp = proxyquire('../../handlers/sign-up', {
+const signUp = proxyquire('../../../handlers/sign-up', {
   'aws-sdk': awsStub,
   '../helpers/resize': resizeStub
 });

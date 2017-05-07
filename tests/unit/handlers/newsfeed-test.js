@@ -38,7 +38,7 @@ const awsStub = {
   DynamoDB: dynamoStub
 };
 
-const newsfeed = proxyquire('../../handlers/newsfeed', { 'aws-sdk': awsStub });
+const newsfeed = proxyquire('../../../handlers/newsfeed', { 'aws-sdk': awsStub });
 
 test('scan', function (t) {
   t.plan(2);

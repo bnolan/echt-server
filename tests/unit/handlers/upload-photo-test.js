@@ -79,7 +79,7 @@ const awsStub = {
   S3: s3Stub
 };
 
-const uploadPhoto = proxyquire('../../handlers/upload-photo', {
+const uploadPhoto = proxyquire('../../../handlers/upload-photo', {
   'aws-sdk': awsStub,
   '../helpers/resize': resizeStub
 });
