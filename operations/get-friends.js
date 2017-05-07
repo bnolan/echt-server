@@ -14,8 +14,6 @@ module.exports = (uuid) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
 
   return docClient.query(params).promise().then((data) => {
-    return data.Items.map(friend => {
-      return friend.toId;
-    });
+    return data.Items;
   });
 };

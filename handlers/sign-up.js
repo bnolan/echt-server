@@ -1,7 +1,6 @@
 /* globals stage */
 
 const uuid = require('uuid/v4');
-const jwt = require('jsonwebtoken');
 const AWS = require('aws-sdk');
 const getStage = require('../helpers/get-stage');
 const resize = require('../helpers/resize');
@@ -9,114 +8,15 @@ const ACCOUNT = require('../constants').ACCOUNT;
 const CAMERA = require('../constants').CAMERA;
 const config = require('../config');
 const addErrorReporter = require('../helpers/error-reporter');
+const storeUser = require('../operations/store-user');
+const storePhoto = require('../operations/store-photo');
+const storeFace = require('../operations/store-face');
+const indexFace = require('../operations/index-face');
+const generateRegisteredKey = require('../operations/generate-registered-key');
 
 AWS.config.update({
   region: config.awsRegion
 });
-
-const S3 = new AWS.S3();
-
-/**
- * @param {Object} user
- * @return {Promise}
- */
-var storeUser = (user) => {
-  var docClient = new AWS.DynamoDB.DocumentClient();
-
-  var params = {
-    TableName: `echt.${stage}.users`,
-    Item: {
-      userId: user.uuid,
-      uuid: user.uuid,
-      user: user
-    }
-  };
-
-  return docClient.put(params).promise().then((response) => {
-    return response;
-  });
-};
-
-/**
- * @param {Object} photo
- * @return {Promise}
- */
-var storePhoto = (photo) => {
-  var docClient = new AWS.DynamoDB.DocumentClient();
-
-  var params = {
-    TableName: `echt.${stage}.photos`,
-    Item: photo
-  };
-
-  return docClient.put(params).promise().then((response) => response);
-};
-
-/**
- * @param {String} faceId
- * @param {String} userId
- * @return {Promise}
- */
-var storeFace = (faceId, userId) => {
-  var docClient = new AWS.DynamoDB.DocumentClient();
-
-  var params = {
-    TableName: `echt.${stage}.faces`,
-    Item: {
-      faceId: faceId,
-      userId: userId
-    }
-  };
-
-  return docClient.put(params).promise().then((response) => response);
-};
-
-/**
- * Analyses a photo for faces. The photo was previously uploaded
- * to a defined S3 bucket by the same user.
- *
- * @param {String} objectKey S3 object (not a URL)
- * @return {Promise} Returning a FaceId
- */
-var indexFace = (objectKey) => {
-  var rekognitionClient = new AWS.Rekognition();
-  var params = {
-    CollectionId: `echt.${stage}`,
-    Image: {
-      S3Object: {
-        // Ensure photos can only be selected from a location we control
-        Bucket: `echt.${stage}.${config.awsRegion}`,
-        Name: objectKey
-      }
-    }
-  };
-  return rekognitionClient.indexFaces(params).promise().then((response) => {
-    // TODO Fail when more than one face detected
-    // TODO Limit multi face failure to similar bounding boxes,
-    // avoid failing when photo captures people in the background
-    // TODO Fail when face is detected with low confidence
-    if (response.FaceRecords[0]) {
-      return response.FaceRecords[0].Face.FaceId;
-    }
-  });
-};
-
-/**
- * @param {Object} user
- * @param {String} deviceId
- * @return {String}
- */
-function generateRegisteredKey (user) {
-  // fixme - sign jwt with a key
-
-  return jwt.sign({
-    userId: user.uuid,
-    deviceId: uuid(),
-    status: user.STATUS
-  }, '', {
-    algorithm: 'none'
-  });
-}
 
 exports.handler = (request) => {
   const errorHandlers = addErrorReporter(request);
@@ -135,6 +35,8 @@ exports.handler = (request) => {
   var buffer = new Buffer(request.body.image, 'base64');
 
   return resize.toSmall(buffer).then((smallBuffer) => {
+    const S3 = new AWS.S3();
+
     var originalPhoto = {
       Bucket: `echt.${stage}.${config.awsRegion}`,
       Key: `users/user-${user.uuid}.jpg`,
@@ -200,10 +102,10 @@ exports.handler = (request) => {
       createdAt: new Date().toISOString()
     };
 
-    photo.userId = user.uuid;
+    photo.authorId = user.uuid;
     user.photo.uuid = photo.uuid;
 
-    return storePhoto(photo);
+    return storePhoto(photo, [user.uuid]);
   }).then(() => {
     const newKey = generateRegisteredKey(user);
 

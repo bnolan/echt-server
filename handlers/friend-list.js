@@ -1,75 +1,17 @@
 /* globals stage */
 
 const AWS = require('aws-sdk');
-const getStage = require('../helpers/get-stage');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const getStage = require('../helpers/get-stage');
 const config = require('../config');
 const addErrorReporter = require('../helpers/error-reporter');
+const getFriends = require('../operations/get-friends');
+const getUsersForFriends = require('../operations/get-users-for-friends');
 
 AWS.config.update({
   region: config.awsRegion
 });
-
-const getFriends = (uuid) => {
-  const params = {
-    TableName: `echt.${stage}.friends`,
-    KeyConditionExpression: 'fromId = :fromId',
-    ExpressionAttributeValues: {
-      ':fromId': uuid
-    }
-  };
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
-
-  return docClient.query(params).promise().then((data) => {
-    return data.Items.map(friend => {
-      friend.uuid = friend.toId;
-      delete friend.toId;
-      delete friend.fromId;
-      return friend;
-    });
-  });
-};
-
-/**
- * @param {Array} friends Object with uuid attribute
- * @return {Array} Matching users records
- */
-const getUsersForFriends = (friends) => {
-  const table = `echt.${stage}.users`;
-  const uuids = _.uniq(friends.map(friend => friend.uuid));
-
-  if (!uuids.length) {
-    return [];
-  }
-
-  // TODO Limit returned data about user
-  const keys = uuids.map(uuid => {
-    return {
-      uuid: uuid,
-      userId: uuid
-    };
-  });
-  const params = {
-    RequestItems: {
-      [table]: {
-        Keys: keys,
-        ProjectionExpression: '#uuid,#user.#name,#user.photo',
-        ExpressionAttributeNames: {
-          '#uuid': 'uuid',
-          '#user': 'user',
-          '#name': 'name'
-        }
-      }
-    }
-  };
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
-  return docClient.batchGet(params).promise().then((data) => {
-    return data.Responses[table];
-  });
-};
 
 exports.handler = (request) => {
   const errorHandlers = addErrorReporter(request);
@@ -84,8 +26,14 @@ exports.handler = (request) => {
 
   return getFriends(deviceKey.userId)
     .then(_friends => {
-      friends = _friends;
-      return getUsersForFriends(friends);
+      friends = _friends.map(friend => {
+        friend.uuid = friend.toId;
+        delete friend.toId;
+        delete friend.fromId;
+        return friend;
+      });
+      const friendIds = _.uniq(friends.map(friend => friend.uuid));
+      return getUsersForFriends(friendIds);
     })
     .then(users => {
       return friends.map(friend => {

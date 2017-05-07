@@ -7,28 +7,11 @@ const STATUS = require('../constants').STATUS;
 const config = require('../config');
 const assert = require('assert');
 const addErrorReporter = require('../helpers/error-reporter');
+const storeFriend = require('../operations/store-friend');
 
 AWS.config.update({
   region: config.awsRegion
 });
-
-/**
- * @param {Object} friend
- * @param {String} stage
- * @return {Promise}
- */
-var storeFriend = (friend) => {
-  var docClient = new AWS.DynamoDB.DocumentClient();
-
-  var params = {
-    TableName: `echt.${stage}.friends`,
-    Item: friend
-  };
-
-  return docClient.put(params).promise().then((response) => {
-    return response;
-  });
-};
 
 // todo - post to FriendRequests table
 
