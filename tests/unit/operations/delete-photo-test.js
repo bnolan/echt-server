@@ -51,10 +51,8 @@ function setup ({friends, photos}) {
     Attributes: {}
   });
   result.queryStub = getPromiseStub({
-    data: {
-      Count: result.photos.length,
-      Items: result.photos
-    }
+    Count: result.photos.length,
+    Items: result.photos
   });
 
   // TODO: make this functional and not a side effect
