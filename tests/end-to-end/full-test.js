@@ -38,6 +38,8 @@ test('🏊  full user flow', (t) => {
 
   const a = new Automator();
 
+  var bensHashigoPhoto;
+
   // Is this call necessary at all? Maybe could do some
   // captcha / robot prevention in here.
   t.test('👨  ben', (t) => {
@@ -271,6 +273,7 @@ test('🏊  full user flow', (t) => {
       a.post('/photos', { image: b64, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.photo);
+        bensHashigoPhoto = r.photo;
       });
     });
 
@@ -291,6 +294,25 @@ test('🏊  full user flow', (t) => {
         t.equal(r.items[1].author.uuid, ben.user.uuid);
         t.equal(r.items[2].author.uuid, ben.user.uuid);
         t.equal(r.items[3].author.uuid, ben.user.uuid);
+      });
+    });
+
+    t.test('delete photo', t => {
+      t.plan(1);
+
+      a.delete('/photos', { uuid: bensHashigoPhoto.uuid }, { 'x-devicekey': ben.deviceKey }).then(r => {
+        t.ok(r.success);
+      });
+    });
+
+    t.test('get newsfeed again', (t) => {
+      t.plan(2);
+
+      a.get('/photos', {}, { 'x-devicekey': ben.deviceKey }).then(r => {
+        t.ok(r.success);
+
+        // Should not contain deleted photo
+        t.notOk(r.items.find(item => item.uuid === bensHashigoPhoto.uuid));
       });
     });
 

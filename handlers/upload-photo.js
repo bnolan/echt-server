@@ -10,7 +10,7 @@ const ACTION = require('../constants').ACTION;
 const PHOTO_STATUS = require('../constants').PHOTO_STATUS;
 const config = require('../config');
 const addErrorReporter = require('../helpers/error-reporter');
-const getFriends = require('./queries/get-friends');
+const getFriends = require('../operations/get-friends');
 const assert = require('assert');
 
 const S3 = new AWS.S3();
@@ -104,15 +104,20 @@ var getUserIdsForFace = (faceId) => {
 
 /**
  * @param {Object} photo
+ * @param {String}
+ * @param {String}
  * @return {Promise}
  */
-var storePhoto = (photo, friendIds) => {
+var storePhoto = (photo, ownerId, friendIds) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   const tableName = `echt.${stage}.photos`;
 
   // Iterate over friends and fan out to the photos table
-  const photos = friendIds.map((uuid) => {
-    return Object.assign({}, photo, {userId: uuid});
+  const photos = friendIds.concat(ownerId).map((uuid) => {
+    return Object.assign({}, photo, {
+      userId: uuid,
+      authorId: ownerId
+    });
   });
 
   const requests = photos.map((photo) => {
@@ -334,8 +339,7 @@ exports.handler = function (request) {
     assert(!_.includes(friendIds, userId));
 
     // Post to my newsfeed + friends
-    const uuids = friendIds.concat(userId);
-    return storePhoto(photo, uuids);
+    return storePhoto(photo, userId, friendIds);
   }).then(() => {
     return {
       success: true,

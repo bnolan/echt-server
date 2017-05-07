@@ -67,6 +67,28 @@ class Automator {
       });
     });
   }
+
+  delete (path, jsonBody, headers) {
+    return new Promise((resolve, reject) => {
+      var headersWithDefaults = Object.assign({'content-type': 'application/json'}, headers);
+      app.proxyRouter({
+        requestContext: {
+          resourcePath: path,
+          httpMethod: 'DELETE'
+        },
+        headers: headersWithDefaults,
+        body: jsonBody
+      }, {
+        done: function (err, response) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(JSON.parse(response.body));
+          }
+        }
+      });
+    });
+  }
 }
 
 module.exports = Automator;
