@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const getStage = require('../helpers/get-stage');
 const jwt = require('jsonwebtoken');

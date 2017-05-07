@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
