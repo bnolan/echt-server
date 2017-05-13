@@ -6,11 +6,11 @@ const CAMERA = require('../../constants').CAMERA;
 const ACTION = require('../../constants').ACTION;
 const STATUS = require('../../constants').STATUS;
 const PHOTO_STATUS = require('../../constants').PHOTO_STATUS;
-// const exec = require('child_process').exec;
 const dynamodbHelper = require('../../helpers/dynamodb');
 const rekognitionHelper = require('../../helpers/rekognition');
 const config = require('../../config');
 const yargs = require('yargs').argv;
+const uuid = require('uuid/v4');
 
 // End-to-end test use the uat databases
 const stage = yargs.stage ? yargs.stage : config.tapeTestStage;
@@ -38,7 +38,8 @@ test('🏊  full user flow', (t) => {
 
   const a = new Automator();
 
-  var bensHashigoPhoto;
+  // Hashigo photo
+  const hashigoId = uuid();
 
   // Is this call necessary at all? Maybe could do some
   // captcha / robot prevention in here.
@@ -89,17 +90,19 @@ test('🏊  full user flow', (t) => {
       });
     });
 
+    const selfieId = uuid();
+
     t.test('take selfie', (t) => {
       t.plan(14);
 
       const image = fs.readFileSync(path.join(__dirname, '../fixtures/ben-2.jpg'));
       const b64 = new Buffer(image).toString('base64');
 
-      a.post('/photos', { image: b64, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ben.deviceKey }).then(r => {
+      a.post('/photos', { image: b64, uuid: selfieId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.photo);
-        t.ok(r.photo.uuid);
         t.ok(r.photo.createdAt);
+        t.equal(r.photo.uuid, selfieId);
         t.equal(r.photo.status, PHOTO_STATUS.UPLOADED);
 
         t.ok(r.photo.info);
@@ -120,12 +123,13 @@ test('🏊  full user flow', (t) => {
     });
 
     t.test('get newsfeed again', (t) => {
-      t.plan(5);
+      t.plan(6);
 
       a.get('/photos', {}, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.items);
         t.equal(r.items.length, 2);
+        t.equal(r.items[0].uuid, selfieId);
         t.equal(r.items[0].author.uuid, ben.user.uuid);
         t.equal(r.items[1].author.uuid, ben.user.uuid);
       });
@@ -173,7 +177,7 @@ test('🏊  full user flow', (t) => {
       const image = fs.readFileSync(path.join(__dirname, '../fixtures/ben-ingo-1.jpg'));
       const b64 = new Buffer(image).toString('base64');
 
-      a.post('/photos', { image: b64, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ben.deviceKey }).then(r => {
+      a.post('/photos', { image: b64, uuid: uuid(), camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
 
         t.equal(r.photo.actions.length, 1);
@@ -270,10 +274,21 @@ test('🏊  full user flow', (t) => {
       const image = fs.readFileSync(path.join(__dirname, '../fixtures/hashigo.jpg'));
       const b64 = new Buffer(image).toString('base64');
 
-      a.post('/photos', { image: b64, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
+      a.post('/photos', { image: b64, uuid: hashigoId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.photo);
-        bensHashigoPhoto = r.photo;
+      });
+    });
+
+    t.test('try and re upload hashigo', (t) => {
+      t.plan(2);
+
+      const image = fs.readFileSync(path.join(__dirname, '../fixtures/hashigo.jpg'));
+      const b64 = new Buffer(image).toString('base64');
+
+      a.post('/photos', { image: b64, uuid: hashigoId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
+        t.ok(!r.success);
+        t.ok(!r.photo);
       });
     });
 
@@ -300,7 +315,7 @@ test('🏊  full user flow', (t) => {
     t.test('delete photo', t => {
       t.plan(1);
 
-      a.delete('/photos', { uuid: bensHashigoPhoto.uuid }, { 'x-devicekey': ben.deviceKey }).then(r => {
+      a.delete('/photos', { uuid: hashigoId }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
       });
     });
@@ -312,7 +327,7 @@ test('🏊  full user flow', (t) => {
         t.ok(r.success);
 
         // Should not contain deleted photo
-        t.notOk(r.items.find(item => item.uuid === bensHashigoPhoto.uuid));
+        t.notOk(r.items.find(item => item.uuid === hashigoId));
       });
     });
 

@@ -1,7 +1,6 @@
 /* globals stage */
 
 const AWS = require('aws-sdk');
-const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const getStage = require('../helpers/get-stage');
 const resize = require('../helpers/resize');
@@ -17,6 +16,7 @@ const searchFacesByCroppedImage = require('../operations/search-faces-by-cropped
 const getUserIdsForFace = require('../operations/get-user-ids-for-face');
 const getUser = require('../operations/get-user');
 const storePhoto = require('../operations/store-photo');
+const checkPhotoUUID = require('../operations/check-photo-uuid');
 
 const S3 = new AWS.S3();
 
@@ -57,7 +57,7 @@ exports.handler = function (request) {
 
   // Start constructing photo record
   var photo = {
-    uuid: uuid(),
+    uuid: request.body.uuid,
     author: {
       uuid: deviceKey.userId
     },
@@ -102,6 +102,8 @@ exports.handler = function (request) {
       url: `data:image/jpg;base64,${base64}`
     };
 
+    return checkPhotoUUID(photo.uuid);
+  }).then(() => {
     // Do both uploads in parallel
     return Promise.all(uploads);
   }).then((values) => {
@@ -171,14 +173,16 @@ exports.handler = function (request) {
       const friend = _.without(userIds, userId)[0];
 
       if (me && friend) {
-        console.log('FRIENDING!');
+        console.log('[upload-photo] Generating friend request action');
         actions.push(getAddFriendAction(friend));
       } else if (me && !friend) {
-        console.log('LOL FRIEND DOESNT USE APP');
+        console.log('[upload-photo] Hmm friend doesnt seem to use the app');
+        // actions.push(getInviteFriendAction(friend));
       } else if (!me && friend) {
-        console.log('ITS NOT YOU BUT I KNOW THE OTHER PERSON');
+        console.log('[upload-photo] Its not you but i know the other person');
+        // actions.push(lolIts(friend));
       } else {
-        console.log('wtf happened', me, friend);
+        console.log('[upload-photo] Rekognition gave us friend ids that we dont recognize', me, friend);
       }
     }
 
