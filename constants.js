@@ -5,7 +5,8 @@ exports.CAMERA = {
 };
 
 exports.ACTION = {
-  ADD_FRIEND: 'ADD_FRIEND'
+  ADD_FRIEND: 'ADD_FRIEND',
+  GROUPIE: 'GROUPIE'
 };
 
 exports.PHOTO_STATUS = {

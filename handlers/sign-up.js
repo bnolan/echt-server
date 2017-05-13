@@ -13,6 +13,7 @@ const storePhoto = require('../operations/store-photo');
 const storeFace = require('../operations/store-face');
 const indexFace = require('../operations/index-face');
 const generateRegisteredKey = require('../operations/generate-registered-key');
+const assert = require('assert');
 
 AWS.config.update({
   region: config.awsRegion
@@ -21,14 +22,18 @@ AWS.config.update({
 exports.handler = (request) => {
   const errorHandlers = addErrorReporter(request);
 
-  // fixme - use verify with a key
+  // FIXME - use verify with a key
   // const userKey = jwt.decode(request.headers['x-devicekey']);
 
   const user = {
     uuid: uuid(),
-    name: request.body.name,
+    pincode: request.body.pincode,
     status: ACCOUNT.REGISTERED
   };
+
+  // FIXME - do we return {success: false} if these raise?
+  assert(user.pincode);
+  assert(user.pincode.length === 4);
 
   global.stage = getStage(request.lambdaContext);
 

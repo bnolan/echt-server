@@ -42,6 +42,18 @@ var getAddFriendAction = (userId) => {
     });
 };
 
+/**
+ * @params {Number} number of faces in the photo
+ * @return {Object} action object
+ */
+var getGroupieAction = (facecount) => {
+  return {
+    type: ACTION.GROUPIE,
+    facecount: facecount,
+    message: 'While we are in beta we can only add one friend at a time, groupies will come later'
+  };
+};
+
 exports.handler = function (request) {
   const errorHandlers = addErrorReporter(request);
 
@@ -72,6 +84,8 @@ exports.handler = function (request) {
 
   // TODO Better way to get user identifeir
   const userId = deviceKey.userId;
+
+  const actions = [];
 
   var uploads;
 
@@ -131,7 +145,12 @@ exports.handler = function (request) {
 
     // Only continue if the photo is a potential selfie,
     // or has exactly two faces in it (friendship request)
-    if (detectedFacesCount === 0 || detectedFacesCount > 2) {
+    if (detectedFacesCount === 0) {
+      return null;
+    }
+
+    if (detectedFacesCount > 2) {
+      actions.push(getGroupieAction(detectedFacesCount));
       return null;
     }
 
@@ -157,8 +176,6 @@ exports.handler = function (request) {
   }).then((userIds) => {
     // Note that null entries in userIds are significant for the amount
     // of originally detected faces (even though they don't have a user match)
-
-    const actions = [];
 
     if (!userIds) {
       // No photos

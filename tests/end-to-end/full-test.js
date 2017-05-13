@@ -11,6 +11,7 @@ const rekognitionHelper = require('../../helpers/rekognition');
 const config = require('../../config');
 const yargs = require('yargs').argv;
 const uuid = require('uuid/v4');
+const getUser = require('../../operations/get-user');
 
 // End-to-end test use the uat databases
 const stage = yargs.stage ? yargs.stage : config.tapeTestStage;
@@ -63,19 +64,23 @@ test('🏊  full user flow', (t) => {
 
       a.post('/sign-up', {
         image: b64,
-        name: 'Ben'
+        pincode: '1812'
       }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.user);
         t.ok(r.user.uuid);
         t.ok(r.user.photo.url);
         t.ok(r.user.photo.small.url);
-        t.equal(r.user.name, 'Ben');
 
         ben.user = r.user;
 
         // Devicekey now has user info in it too
         ben.deviceKey = r.deviceKey;
+
+        // Check pincode
+        getUser(r.user.uuid).then((user) => {
+          t.ok(user.pincode, '1812');
+        });
       });
     });
 
@@ -157,7 +162,7 @@ test('🏊  full user flow', (t) => {
 
       a.post('/sign-up', {
         image: b64,
-        name: 'Ingo'
+        pincode: '1982'
       }, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
         ingo.user = r.user;
@@ -205,7 +210,7 @@ test('🏊  full user flow', (t) => {
     });
 
     t.test('view friend request', (t) => {
-      t.plan(6);
+      t.plan(5);
 
       a.get('/friends', {}, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
@@ -213,7 +218,6 @@ test('🏊  full user flow', (t) => {
         t.equal(r.friends.length, 1);
         t.equal(r.friends[0].status, STATUS.PENDING);
         t.equal(r.friends[0].uuid, ingoUuid);
-        t.ok(r.friends[0].name);
       });
     });
 
@@ -263,6 +267,9 @@ test('🏊  full user flow', (t) => {
         // Photos are sorted newest -> oldest
         t.equal(r.items[0].author.uuid, ben.user.uuid);
         t.equal(r.items[1].author.uuid, ingo.user.uuid);
+
+        // Should be no actions on this because it's not my photo
+        t.equal(r.items[0].actions.length, 0);
       });
     });
 

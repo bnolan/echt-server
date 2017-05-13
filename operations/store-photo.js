@@ -21,9 +21,19 @@ module.exports = (photo, userIds) => {
 
   // Iterate over friends and fan out to the photos table
   const photos = userIds.map((userId) => {
-    return Object.assign({}, photo, {
+    const result = Object.assign({}, photo, {
       userId: userId
     });
+
+    // Actions are not fanned out - fixme - this should
+    // be code to slim down the photo to the minimum
+    // required data for fanned out photos
+    if (userId !== photo.authorId) {
+      delete result.actions;
+      delete result.actions;
+    }
+
+    return result;
   });
 
   const requests = photos.map((photo) => {
