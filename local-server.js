@@ -11,7 +11,7 @@ global.ECHT_STAGE = yargs.stage;
 
 const a = new Automator();
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.all('/:path', function (req, res) {
   const method = req.method.toLowerCase();
