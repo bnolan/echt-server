@@ -24,13 +24,15 @@ exports.handler = (request) => {
 
   const params = {
     TableName: `echt.${stage}.photos`,
-    FilterExpression: 'userId = :id',
+    IndexName: `echt.${stage}.photosByUserId`,
+    KeyConditionExpression: 'userId = :id',
+    ScanIndexForward: false, // sort descending by createdAt
     ExpressionAttributeValues: {
       ':id': deviceKey.userId
     }
   };
 
-  return docClient.scan(params).promise().then((data) => {
+  return docClient.query(params).promise().then((data) => {
     return {
       success: true,
       items: _.sortBy(data.Items, (i) => {

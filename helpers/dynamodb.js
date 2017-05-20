@@ -85,10 +85,28 @@ const createPhotos = (stage) => {
     ],
     AttributeDefinitions: [
       { AttributeName: 'uuid', AttributeType: 'S' },
-      { AttributeName: 'userId', AttributeType: 'S' }
+      { AttributeName: 'userId', AttributeType: 'S' },
+      { AttributeName: 'createdAt', AttributeType: 'S' }
     ],
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: `echt.${stage}.photosByUserId`,
+        KeySchema: [
+          { AttributeName: 'userId', KeyType: 'HASH' },
+          { AttributeName: 'createdAt', KeyType: 'RANGE' }
+        ],
+        Projection: {
+          ProjectionType: 'ALL'
+        },
+        ProvisionedThroughput: {
+          ReadCapacityUnits: 2,
+          WriteCapacityUnits: 1
+        }
+      }
+    ],
+    // Most reads will be from the 'photosByUserId' index
     ProvisionedThroughput: {
-      ReadCapacityUnits: 2,
+      ReadCapacityUnits: 1,
       WriteCapacityUnits: 1
     }
   });
