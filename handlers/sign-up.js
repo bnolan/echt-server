@@ -31,9 +31,10 @@ exports.handler = (request) => {
     status: ACCOUNT.REGISTERED
   };
 
-  // FIXME - do we return {success: false} if these raise?
-  assert(user.pincode);
-  assert(user.pincode.length === 4);
+  // PIN is optional on sign-up, can be set later
+  if (user.pincode) {
+    assert(user.pincode.length === 4);
+  }
 
   global.stage = getStage(request.lambdaContext);
 
