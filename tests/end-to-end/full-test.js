@@ -63,8 +63,7 @@ test('🏊  full user flow', (t) => {
       const b64 = new Buffer(image).toString('base64');
 
       a.post('/sign-up', {
-        image: b64,
-        pincode: '1812'
+        image: b64
       }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.user);
@@ -76,11 +75,6 @@ test('🏊  full user flow', (t) => {
 
         // Devicekey now has user info in it too
         ben.deviceKey = r.deviceKey;
-
-        // Check pincode
-        getUser(r.user.uuid).then((user) => {
-          t.ok(user.pincode, '1812');
-        });
       });
     });
 
@@ -161,8 +155,7 @@ test('🏊  full user flow', (t) => {
       const b64 = new Buffer(image).toString('base64');
 
       a.post('/sign-up', {
-        image: b64,
-        pincode: '1982'
+        image: b64
       }, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
         ingo.user = r.user;
