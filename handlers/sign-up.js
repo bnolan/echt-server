@@ -27,14 +27,8 @@ exports.handler = (request) => {
 
   const user = {
     uuid: uuid(),
-    pincode: request.body.pincode,
     status: ACCOUNT.REGISTERED
   };
-
-  // PIN is optional on sign-up, can be set later
-  if (user.pincode) {
-    assert(user.pincode.length === 4);
-  }
 
   global.stage = getStage(request.lambdaContext);
 

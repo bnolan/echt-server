@@ -57,7 +57,7 @@ test('🏊  full user flow', (t) => {
     });
 
     t.test('complete signup', (t) => {
-      t.plan(6);
+      t.plan(5);
 
       const image = fs.readFileSync(path.join(__dirname, '../fixtures/ben-1.jpg'));
       const b64 = new Buffer(image).toString('base64');
