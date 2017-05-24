@@ -11,7 +11,6 @@ const rekognitionHelper = require('../../helpers/rekognition');
 const config = require('../../config');
 const yargs = require('yargs').argv;
 const uuid = require('uuid/v4');
-const getUser = require('../../operations/get-user');
 
 // End-to-end test use the uat databases
 const stage = yargs.stage ? yargs.stage : config.tapeTestStage;

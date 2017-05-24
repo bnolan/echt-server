@@ -13,7 +13,6 @@ const storePhoto = require('../operations/store-photo');
 const storeFace = require('../operations/store-face');
 const indexFace = require('../operations/index-face');
 const generateRegisteredKey = require('../operations/generate-registered-key');
-const assert = require('assert');
 
 AWS.config.update({
   region: config.awsRegion
