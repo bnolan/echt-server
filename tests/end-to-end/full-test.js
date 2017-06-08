@@ -66,7 +66,22 @@ test('🏊  full user flow', (t) => {
       }, { 'x-devicekey': ben.deviceKey }).then(r => {
         t.notOk(r.success);
         t.notOk(r.deviceKey);
-        t.ok(r.message.match(/face/));
+        t.ok(r.message.match(/No face/));
+      });
+    });
+
+    t.test('two person signup', (t) => {
+      t.plan(3);
+
+      const image = fs.readFileSync(path.join(__dirname, '../fixtures/ben-ingo-1.jpg'));
+      const b64 = new Buffer(image).toString('base64');
+
+      a.post('/sign-up', {
+        image: b64
+      }, { 'x-devicekey': ben.deviceKey }).then(r => {
+        t.notOk(r.success);
+        t.notOk(r.deviceKey);
+        t.ok(r.message.match(/Too many faces/));
       });
     });
 

@@ -23,7 +23,6 @@ module.exports = (objectKey) => {
     }
   };
   return rekognitionClient.indexFaces(params).promise().then((response) => {
-    // TODO Fail when more than one face detected
     // TODO Limit multi face failure to similar bounding boxes,
     // avoid failing when photo captures people in the background
     // TODO Fail when face is detected with low confidence

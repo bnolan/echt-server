@@ -12,6 +12,7 @@ const storeUser = require('../operations/store-user');
 const storePhoto = require('../operations/store-photo');
 const storeFace = require('../operations/store-face');
 const indexFace = require('../operations/index-face');
+const detectFaces = require('../operations/detect-faces');
 const generateRegisteredKey = require('../operations/generate-registered-key');
 
 AWS.config.update({
@@ -32,6 +33,7 @@ exports.handler = (request) => {
   global.stage = getStage(request.lambdaContext);
 
   var buffer = new Buffer(request.body.image, 'base64');
+  var originalKey;
 
   return resize.toSmall(buffer).then((smallBuffer) => {
     const S3 = new AWS.S3();
@@ -75,15 +77,33 @@ exports.handler = (request) => {
   }).then((values) => {
     // Index the face, in order to detect users in further selfies,
     // as well as to correlate friends for friendship requests
-    var original = values[0];
-    return indexFace(original.key);
-  }).then((faceId) => {
-    if (!faceId) {
+    originalKey = values[0].key;
+    return detectFaces(originalKey);
+  }).then((response) => {
+    const faceCount = response.FaceDetails.length;
+
+    if (faceCount === 0) {
       return {
         success: false,
-        message: 'No face present in the photo'
+        message: 'No face in this photo'
       };
     }
+
+    if (faceCount > 1) {
+      return {
+        success: false,
+        message: 'Too many faces in this photo'
+      };
+    }
+
+    return indexFace(originalKey);
+  }).then((result) => {
+    // Result may be a faceId, or an object with success:false and a message
+    if (result.success === false) {
+      return result;
+    }
+
+    let faceId = result;
 
     return Promise.all([
       storeUser(user),

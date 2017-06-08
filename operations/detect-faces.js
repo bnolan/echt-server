@@ -6,7 +6,7 @@ const config = require('../config');
 /**
  * Analyses a photo for faces. The photo was previously uploaded
  * to a defined S3 bucket by the same user.
- * Does not store the face. Only the origina sign-up photo face gets stored,
+ * Does not store the face. Only the original sign-up photo face gets stored,
  * in order to keep things simple for the moment.
  *
  * @param {String} objectKey S3 object (not a URL)
