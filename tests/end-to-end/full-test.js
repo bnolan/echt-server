@@ -55,6 +55,21 @@ test('🏊  full user flow', (t) => {
       });
     });
 
+    t.test('incorrect signup', (t) => {
+      t.plan(3);
+
+      const image = fs.readFileSync(path.join(__dirname, '../fixtures/hashigo.jpg'));
+      const b64 = new Buffer(image).toString('base64');
+
+      a.post('/sign-up', {
+        image: b64
+      }, { 'x-devicekey': ben.deviceKey }).then(r => {
+        t.notOk(r.success);
+        t.notOk(r.deviceKey);
+        t.ok(r.message.match(/face/));
+      });
+    });
+
     t.test('complete signup', (t) => {
       t.plan(5);
 

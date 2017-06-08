@@ -78,11 +78,22 @@ exports.handler = (request) => {
     var original = values[0];
     return indexFace(original.key);
   }).then((faceId) => {
+    if (!faceId) {
+      return {
+        success: false,
+        message: 'No face present in the photo'
+      };
+    }
+
     return Promise.all([
       storeUser(user),
       storeFace(faceId, user.uuid)
     ]);
-  }).then(() => {
+  }).then((result) => {
+    if (result.success === false) {
+      return result;
+    }
+
     const photo = {
       uuid: uuid(),
 
@@ -105,7 +116,11 @@ exports.handler = (request) => {
     user.photo.uuid = photo.uuid;
 
     return storePhoto(photo, [user.uuid]);
-  }).then(() => {
+  }).then((result) => {
+    if (result.success === false) {
+      return result;
+    }
+
     const newKey = generateRegisteredKey(user);
 
     return {
