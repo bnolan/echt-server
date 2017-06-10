@@ -2,6 +2,7 @@
 
 const uuid = require('uuid/v4');
 const AWS = require('aws-sdk');
+const ApiError = require('../helpers/api-error');
 const getStage = require('../helpers/get-stage');
 const resize = require('../helpers/resize');
 const ACCOUNT = require('../constants').ACCOUNT;
@@ -83,26 +84,15 @@ exports.handler = (request) => {
     const faceCount = response.FaceDetails.length;
 
     if (faceCount === 0) {
-      return {
-        success: false,
-        message: 'No face in this photo'
-      };
+      throw new ApiError('No face in this photo');
     }
 
     if (faceCount > 1) {
-      return {
-        success: false,
-        message: 'Too many faces in this photo'
-      };
+      throw new ApiError('Too many faces in this photo');
     }
 
     return indexFace(originalKey);
   }).then((result) => {
-    // Result may be a faceId, or an object with success:false and a message
-    if (result.success === false) {
-      return result;
-    }
-
     let faceId = result;
 
     return Promise.all([
@@ -110,10 +100,6 @@ exports.handler = (request) => {
       storeFace(faceId, user.uuid)
     ]);
   }).then((result) => {
-    if (result.success === false) {
-      return result;
-    }
-
     const photo = {
       uuid: uuid(),
 
@@ -137,10 +123,6 @@ exports.handler = (request) => {
 
     return storePhoto(photo, [user.uuid]);
   }).then((result) => {
-    if (result.success === false) {
-      return result;
-    }
-
     const newKey = generateRegisteredKey(user);
 
     return {
@@ -148,6 +130,16 @@ exports.handler = (request) => {
       deviceKey: newKey,
       user: user
     };
-  })
-  .catch(errorHandlers.catchPromise);
+  }).catch(err => {
+    // Operational error, expose message to the user
+    if (err instanceof ApiError) {
+      return err.getResponse();
+    }
+
+    // Log unexpected (non-operational) errors internally
+    return errorHandlers.catchPromise(err).then(() => {
+      // Avoid leaking the internal error message and return a generic one
+      return ApiError.getDefaultResponse();
+    });
+  });
 };
