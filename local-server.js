@@ -22,8 +22,17 @@ app.all('/:path', function (req, res) {
   console.log(id);
   a[method](path, body, headers).then(r => {
     console.log(id, JSON.stringify(r, null, ' '));
-    res.type('json');
-    res.send(r);
+    // TODO Type-safe comparison
+    // Responses can either be the body itself, or a ApiResponse object.
+    // See https://github.com/claudiajs/example-projects/blob/master/web-api-custom-status-code/web.js
+    if (r.response) {
+      res.status(r.code);
+      res.set(r.headers);
+      res.send(r.response);
+    } else {
+      res.type('json');
+      res.send(r);
+    }
   });
 });
 
