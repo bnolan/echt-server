@@ -9,6 +9,7 @@
     "release-dev": "claudia update --version dev --use-s3-bucket echt-deploys.us-west-2",
     "release-uat": "claudia update --version uat --use-s3-bucket echt-deploys.us-west-2",
     "release-prod": "claudia update --version prod --use-s3-bucket echt-deploys.us-west-2",
+    "truncate-uat": "node tasks/truncate-uat.js",
     "test": "tape -r ./tests/bootstrap tests/**/*-test.js",
     "test-unit": "tape -r ./tests/bootstrap tests/unit/*-test.js",
     "test-end-to-end": "tape -r ./tests/bootstrap tests/end-to-end/*-test.js",
@@ -42,6 +43,7 @@
     "jsonwebtoken": "^7.3.0",
     "lodash": "^4.17.4",
     "raygun": "^0.9.1",
+    "sleep-promise": "^2.0.0",
     "tempfile": "^1.1.1",
     "uuid": "^3.0.1"
   },
