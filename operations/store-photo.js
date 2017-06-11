@@ -16,8 +16,8 @@ module.exports = (photo, userIds) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   const tableName = `echt.${stage}.photos`;
 
-  assert(photo.uuid);
-  assert(photo.authorId);
+  assert(photo.uuid, 'should have photo uuid');
+  assert(photo.authorId, 'should have photo authorId');
 
   // Iterate over friends and fan out to the photos table
   const photos = userIds.map((userId) => {

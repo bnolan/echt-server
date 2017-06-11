@@ -21,7 +21,7 @@ exports.handler = (request) => {
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);
 
-  assert(request.body.uuid);
+  assert(request.body.uuid, 'should have request.body.uuid');
 
   var friend;
 

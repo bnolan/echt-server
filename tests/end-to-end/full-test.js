@@ -258,6 +258,9 @@ test('🏊  full user flow', (t) => {
       t.plan(5);
 
       a.get('/friends', {}, { 'x-devicekey': ingo.deviceKey }).then(r => {
+        console.log('#friends:');
+        console.log(JSON.stringify(r));
+
         t.ok(r.success);
         t.equal(r.friends.length, 1);
         t.equal(r.friends[0].status, STATUS.PENDING);

@@ -212,9 +212,8 @@ exports.handler = function (request) {
   }).then(friends => {
     const friendIds = friends.map(friend => friend.toId);
 
-    // I shouldn't be a friend of myself
-    assert(friendIds instanceof Array);
-    assert(!_.includes(friendIds, userId));
+    assert(friendIds instanceof Array, 'friendIds should be an array');
+    assert(!_.includes(friendIds, userId), 'I shouldn\'t be a friend of myself');
 
     // Post to my newsfeed + friends
     return storePhoto(photo, friendIds.concat([userId]));

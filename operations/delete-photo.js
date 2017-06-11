@@ -10,9 +10,9 @@ const s3KeyFromUrl = require('../helpers/s3-key-from-url');
  * @return {Promise}
  */
 module.exports = (photoId, userId, stage) => {
-  assert(photoId);
-  assert(userId);
-  assert(stage);
+  assert(photoId, 'should have photoId');
+  assert(userId, 'should have userId');
+  assert(stage, 'should have stage');
 
   var photos;
 
@@ -80,7 +80,7 @@ module.exports = (photoId, userId, stage) => {
     const s3 = new AWS.S3();
 
     // URLs are the same on all returned photos
-    assert(photos.length > 0);
+    assert(photos.length > 0, 'photos.length should be greater than 0');
     const urls = [photos[0].original.url, photos[0].small.url];
     const objects = urls.map(url => {
       return {

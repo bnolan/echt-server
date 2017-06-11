@@ -24,8 +24,8 @@ exports.handler = function (request) {
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);
 
-  assert(request.body.user);
-  assert(request.body.photoId);
+  assert(request.body.user, 'should have request.body.user');
+  assert(request.body.photoId, 'should have request.body.photoId');
 
   const requester = deviceKey.userId;
   const recipient = request.body.user;
