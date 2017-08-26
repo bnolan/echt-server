@@ -55,5 +55,6 @@ Code push has a `Staging` and `Production` stage. You can release to them via th
 You can run a simple local copy of the Lambda commands via `yarn run server`.
 It'll use the ClaudiaJS proxying system to use locally executed handlers
 instead of Lambda functions, but interact with the real AWS services.
+By default, it's using the `uat` stage.
 Force a different stage via `yarn run server -- --stage=dev-ingo`.
 In order to use a local server in the app, adjust the `endpoint` URL in `Echt/config.js`.
