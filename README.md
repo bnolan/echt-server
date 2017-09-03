@@ -18,6 +18,8 @@ Get your [credentials from aws](https://942514019561.signin.aws.amazon.com/conso
 
  * `yarn run start`: Initialise the app (not required in an existing AWS setup)
  * `yarn run release-dev`: Deploys the current code to dev
+ * `yarn run release-uat`: Deploys the current code to UAT
+ * `yarn run release-prod`: Deploys the current code to prod
  * `yarn run test`: Run all tests (interacts with AWS resources). You can run your own "stage" via `yarn run test -- --stage=<my-stage>` for integration tests.
  * `yarn run test`: Run unit tests
  * `yarn run logs`: View Lambda logs
@@ -33,22 +35,6 @@ To update:
 
     cd policies
     aws iam update-assume-role-policy --role-name test-executor --policy-name access-dynamodb --policy-document file://access-dynamodb.json
-
-## Code Push
-
-We're using [Code Push](http://microsoft.github.io/code-push) to publish the React Native app files
-and have clients auto-update without going through app store updates. Get going via:
-
-```
-yarn global install code-push-cli
-code-push login
-```
-
-Code push has a `Staging` and `Production` stage. You can release to them via the following commands:
-
- * `yarn run release-uat`: Pushes the current iOS react-native bundle to uat (`Staging`)
- * `yarn run release-prod`: [Promotes](http://microsoft.github.io/code-push/docs/cli.html#link-7)
-   the `Staging` code to `Production`
 
 ## Local Server
 
