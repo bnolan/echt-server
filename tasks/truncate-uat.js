@@ -24,6 +24,10 @@ rekognitionHelper.emptyCollection(stage)
     console.log('dropFaces...');
     return dynamodbHelper.dropFaces(stage);
   })
+  .then(() => {
+    console.log('dropFriends...');
+    return dynamodbHelper.dropFriends(stage);
+  })
   .then(sleep(5000))
   .then(() => {
     console.log('createUsers...');
@@ -36,6 +40,11 @@ rekognitionHelper.emptyCollection(stage)
   .then(() => {
     console.log('createFaces...');
     return dynamodbHelper.createFaces(stage);
-  }).then(() => {
+  })
+  .then(() => {
+    console.log('createFriends...');
+    return dynamodbHelper.createFriends(stage);
+  })
+  .then(() => {
     console.log('Done');
   });
