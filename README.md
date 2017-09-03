@@ -44,3 +44,13 @@ instead of Lambda functions, but interact with the real AWS services.
 By default, it's using the `uat` stage.
 Force a different stage via `yarn run server -- --stage=dev-ingo`.
 In order to use a local server in the app, adjust the `endpoint` URL in `Echt/config.js`.
+
+## Testing
+
+By default, the client will add new faces to the `uat` stage when run on the simulator
+or when connected to a local device. This stage is shared between developers,
+with a single users and faces database. Previous face recognitions of the same
+photo or person can mess up new signups. You can clear the `uat` database with
+the following command (add the `YESIMSURE=1` parameter):
+
+  node tasks/truncate-uat.js
