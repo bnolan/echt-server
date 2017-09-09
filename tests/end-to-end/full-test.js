@@ -8,6 +8,7 @@ const STATUS = require('../../constants').STATUS;
 const PHOTO_STATUS = require('../../constants').PHOTO_STATUS;
 const dynamodbHelper = require('../../helpers/dynamodb');
 const rekognitionHelper = require('../../helpers/rekognition');
+const resizeHelper = require('../../helpers/resize');
 const config = require('../../config');
 const yargs = require('yargs').argv;
 const uuid = require('uuid/v4');
@@ -105,6 +106,8 @@ test('🏊  full user flow', (t) => {
         // Devicekey now has user info in it too
         ben.deviceKey = r.deviceKey;
       });
+
+      // Technically this would upload a full-resolution picture in the background here
     });
 
     t.test('get newsfeed', (t) => {
@@ -121,12 +124,22 @@ test('🏊  full user flow', (t) => {
     const selfieId = uuid();
 
     t.test('take selfie', (t) => {
-      t.plan(14);
+      t.plan(15);
 
       const image = fs.readFileSync(path.join(__dirname, '../fixtures/ben-2.jpg'));
-      const b64 = new Buffer(image).toString('base64');
+      const origBuffer = new Buffer(image);
 
-      a.post('/photos', { image: b64, uuid: selfieId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ben.deviceKey }).then(r => {
+      // Simulate client-side resizes
+      resizeHelper.toMedium(origBuffer)
+      .then(resizedBuffer => {
+        // Upload small photo for fast face reco
+        return a.post(
+          '/photos',
+          { image: resizedBuffer.toString('base64'), uuid: selfieId, camera: CAMERA.FRONT_FACING },
+          { 'x-devicekey': ben.deviceKey }
+        );
+      })
+      .then(r => {
         t.ok(r.success);
         t.ok(r.photo);
         t.ok(r.photo.createdAt);
@@ -147,6 +160,19 @@ test('🏊  full user flow', (t) => {
         t.ok(r.photo.inline);
         t.ok(r.photo.inline.url.match(/data:/), 'Image string contains data pragma');
         t.ok(r.photo.inline.url.length > 0, 'Image string contains data');
+      })
+      .then(() => {
+        // Simulate background upload of full resolution image
+        return a.put(
+          '/photos',
+          { image: origBuffer.toString('base64'), uuid: selfieId },
+          { 'x-devicekey': ben.deviceKey }
+        );
+      })
+      .then(r => {
+        t.ok(r.success);
+
+        // TODO Assert that photo has actually been replaced (compare dimensions or content)
       });
     });
 
@@ -258,9 +284,6 @@ test('🏊  full user flow', (t) => {
       t.plan(5);
 
       a.get('/friends', {}, { 'x-devicekey': ingo.deviceKey }).then(r => {
-        console.log('#friends:');
-        console.log(JSON.stringify(r));
-
         t.ok(r.success);
         t.equal(r.friends.length, 1);
         t.equal(r.friends[0].status, STATUS.PENDING);

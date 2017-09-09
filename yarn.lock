@@ -160,7 +160,7 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
 
-aws-sdk@^2.27.0, aws-sdk@^2.7.21:
+aws-sdk@^2.0.4, aws-sdk@^2.27.0, aws-sdk@^2.7.21:
   version "2.27.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.27.0.tgz#8d823c8e7dcc19a41a9df8c1427a9bab0fa5ee82"
   dependencies:
@@ -2509,6 +2509,19 @@ run-parallel@^1.1.2:
 rx-lite@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
+
+s3signed@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/s3signed/-/s3signed-0.1.0.tgz#ae03b86259413215ed43e99285c8c347579735fb"
+  dependencies:
+    aws-sdk "^2.0.4"
+
+s3urls@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/s3urls/-/s3urls-1.5.2.tgz#182a991208fc1ab5214443eb250fc8f53b4bc9ea"
+  dependencies:
+    minimist "^1.1.0"
+    s3signed "^0.1.0"
 
 safe-buffer@^5.0.1:
   version "5.0.1"

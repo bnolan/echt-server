@@ -43,7 +43,9 @@ It'll use the ClaudiaJS proxying system to use locally executed handlers
 instead of Lambda functions, but interact with the real AWS services.
 By default, it's using the `uat` stage.
 Force a different stage via `yarn run server -- --stage=dev-ingo`.
-In order to use a local server in the app, adjust the `endpoint` URL in `Echt/config.js`.
+
+In order to use a local server in the app, adjust the `endpoint` URL in `config.js`
+of the `echt-client` repo (set it to `http://localhost:3000`, without a trailing slash).
 
 ## Testing
 
