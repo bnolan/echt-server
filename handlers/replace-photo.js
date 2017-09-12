@@ -51,7 +51,7 @@ exports.handler = function (request) {
 
     // Infer S3 location from full URL. Required because photos
     // might be stored either in users/* or photos/* folders.
-    const s3data = s3urls.fromUrl(photo.url);
+    const s3data = s3urls.fromUrl(photo.original.url);
 
     return S3.upload({
       Bucket: `echt.${stage}.${config.awsRegion}`,
