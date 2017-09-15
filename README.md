@@ -54,3 +54,14 @@ photo or person can mess up new signups. You can clear the `uat` database with
 the following command (add the `YESIMSURE=1` parameter):
 
   node tasks/truncate-uat.js
+  
+ ## Multiple AWS accounts
+ 
+ The intention is to move to seperate AWS accounts (all slaved to a master echt
+ account that pays the bill) for test, uat and production.
+ 
+ Test will be constantly modified and deleted by TravisCI or local end-to-end tests,
+ the UAT environment will be stable and not deleted, but will have only data by
+ Ingo and Ben. Beta users (of both the UAT and Prod iphone apps) will connect
+ to the production environment which must be treated carefully as it contains user
+ data.
