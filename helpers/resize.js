@@ -4,7 +4,7 @@ const tempfile = require('tempfile');
 const im = require('imagemagick');
 const fs = require('fs');
 
-exports.toSmall = (buffer) => {
+const withDimensions = (buffer, width, height) => {
   const original = tempfile('.jpg');
   const small = tempfile('.jpg');
   const crop = promisify(im.crop);
@@ -22,7 +22,15 @@ exports.toSmall = (buffer) => {
   });
 };
 
-exports.toInline = (buffer) => {
+const toSmall = (buffer) => {
+  return withDimensions(buffer, 256, 256);
+};
+
+const toMedium = (buffer) => {
+  return withDimensions(buffer, 640, 640);
+};
+
+const toInline = (buffer) => {
   const original = tempfile('.jpg');
   const exec = promisify(childProcess.exec);
 
@@ -42,7 +50,7 @@ exports.toInline = (buffer) => {
  * @param {Object} boundingBox See http://docs.aws.amazon.com/rekognition/latest/dg/API_BoundingBox.html
  * @return {String} Base64 encoded image string
  */
-exports.cropByBoundingBox = (buffer, boundingBox) => {
+const cropByBoundingBox = (buffer, boundingBox) => {
   const exec = promisify(childProcess.exec);
   const original = tempfile('.jpg');
 
@@ -74,4 +82,12 @@ exports.cropByBoundingBox = (buffer, boundingBox) => {
     .then((stdout, stderr) => {
       return stdout;
     });
+};
+
+module.exports = {
+  withDimensions,
+  toInline,
+  toMedium,
+  toSmall,
+  cropByBoundingBox
 };

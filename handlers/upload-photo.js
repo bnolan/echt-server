@@ -92,7 +92,7 @@ exports.handler = function (request) {
   return resize.toSmall(buffer).then((smallBuffer) => {
     var originalPhoto = {
       Bucket: `echt.${stage}.${config.awsRegion}`,
-      Key: `photos/photo-${photo.uuid}-original.jpg`,
+      Key: `photos/photo-${photo.uuid}.jpg`,
       ContentType: 'image/jpeg',
       Body: buffer
     };
