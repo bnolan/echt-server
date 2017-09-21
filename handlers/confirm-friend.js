@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const getStage = require('../helpers/get-stage');
 const jwt = require('jsonwebtoken');
 const STATUS = require('../constants').STATUS;
 const config = require('../config');
@@ -15,8 +14,6 @@ AWS.config.update({
 
 exports.handler = (request) => {
   const errorHandlers = addErrorReporter(request);
-
-  global.stage = getStage(request.lambdaContext);
 
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);

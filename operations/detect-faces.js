@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const config = require('../config');
 
@@ -18,7 +16,7 @@ module.exports = (objectKey) => {
     Image: {
       S3Object: {
         // Ensure photos can only be selected from a location we control
-        Bucket: `echt.${stage}.${config.awsRegion}`,
+        Bucket: `echt.${config.environment}.${config.awsRegion}`,
         Name: objectKey
       }
     }

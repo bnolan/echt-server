@@ -1,11 +1,9 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 
 module.exports = (fromId, toId, status) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   const params = {
-    TableName: `echt.${stage}.friends`,
+    TableName: `echt.friends`,
     Key: {
       'fromId': fromId,
       'toId': toId

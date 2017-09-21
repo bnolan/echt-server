@@ -1,8 +1,5 @@
-/* globals stage */
-
 const uuid = require('uuid/v4');
 const AWS = require('aws-sdk');
-const getStage = require('../helpers/get-stage');
 const resize = require('../helpers/resize');
 const ACCOUNT = require('../constants').ACCOUNT;
 const CAMERA = require('../constants').CAMERA;
@@ -30,8 +27,6 @@ exports.handler = (request) => {
     status: ACCOUNT.REGISTERED
   };
 
-  global.stage = getStage(request.lambdaContext);
-
   var buffer = new Buffer(request.body.image, 'base64');
   var originalKey;
 
@@ -39,14 +34,14 @@ exports.handler = (request) => {
     const S3 = new AWS.S3();
 
     var originalPhoto = {
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       Key: `users/user-${user.uuid}.jpg`,
       ContentType: 'image/jpeg',
       Body: buffer
     };
 
     var smallPhoto = {
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       Key: `users/user-${user.uuid}-small.jpg`,
       ContentType: 'image/jpeg',
       Body: smallBuffer

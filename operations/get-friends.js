@@ -1,10 +1,8 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 
 module.exports = (uuid) => {
   const params = {
-    TableName: `echt.${stage}.friends`,
+    TableName: `echt.friends`,
     KeyConditionExpression: 'fromId = :fromId',
     ExpressionAttributeValues: {
       ':fromId': uuid

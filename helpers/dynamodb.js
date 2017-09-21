@@ -34,9 +34,9 @@ function drop (params, callback) {
 //   "userId": "11df474c-195a-4810-a31c-0be270d580f4",
 //   "uuid": "11df474c-195a-4810-a31c-0be270d580f4"
 // }
-const createUsers = (stage) => {
+const createUsers = () => {
   return create({
-    TableName: `echt.${stage}.users`,
+    TableName: `echt.users`,
     KeySchema: [
       { AttributeName: 'uuid', KeyType: 'HASH' },
       { AttributeName: 'userId', KeyType: 'RANGE' }
@@ -52,9 +52,9 @@ const createUsers = (stage) => {
   });
 };
 
-const dropUsers = (stage) => {
+const dropUsers = () => {
   return drop({
-    TableName: `echt.${stage}.users`
+    TableName: `echt.users`
   });
 };
 
@@ -76,9 +76,9 @@ const dropUsers = (stage) => {
 //     "camera": "FRONT_FACING"
 //   }
 // }
-const createPhotos = (stage) => {
+const createPhotos = () => {
   return create({
-    TableName: `echt.${stage}.photos`,
+    TableName: `echt.photos`,
     KeySchema: [
       { AttributeName: 'uuid', KeyType: 'HASH' },
       { AttributeName: 'userId', KeyType: 'RANGE' }
@@ -90,7 +90,7 @@ const createPhotos = (stage) => {
     ],
     GlobalSecondaryIndexes: [
       {
-        IndexName: `echt.${stage}.photosByUserId`,
+        IndexName: `echt.photosByUserId`,
         KeySchema: [
           { AttributeName: 'userId', KeyType: 'HASH' },
           { AttributeName: 'createdAt', KeyType: 'RANGE' }
@@ -112,9 +112,9 @@ const createPhotos = (stage) => {
   });
 };
 
-const dropPhotos = (stage) => {
+const dropPhotos = () => {
   return drop({
-    TableName: `echt.${stage}.photos`
+    TableName: `echt.photos`
   });
 };
 
@@ -122,9 +122,9 @@ const dropPhotos = (stage) => {
 //   "faceId": "d4d38257-f97a-5632-af61-c643268d0768",
 //   "userId": "d3265f13-f4d1-42ce-b973-e4f7de730c54"
 // }
-const createFaces = (stage) => {
+const createFaces = () => {
   return create({
-    TableName: `echt.${stage}.faces`,
+    TableName: `echt.faces`,
     KeySchema: [
       { AttributeName: 'faceId', KeyType: 'HASH' },
       { AttributeName: 'userId', KeyType: 'RANGE' }
@@ -140,9 +140,9 @@ const createFaces = (stage) => {
   });
 };
 
-const dropFaces = (stage) => {
+const dropFaces = () => {
   return drop({
-    TableName: `echt.${stage}.faces`
+    TableName: `echt.faces`
   });
 };
 
@@ -154,13 +154,13 @@ const dropFaces = (stage) => {
 //   "status": "ACCEPTED",
 //   "toId": "350bb912-11c4-414d-8bd7-446fbd80d475"
 // }
-const createFriends = (stage) => {
+const createFriends = () => {
   // Each friendship is denormalised into two rows, so that you can easily
   // query all friends for a user by fromId, regardless
   // who initiated the friendship. This ensures efficient DynamoDB querying
   // without duplicate provisioned throughput for a global secondary index.
   return create({
-    TableName: `echt.${stage}.friends`,
+    TableName: `echt.friends`,
     KeySchema: [
       { AttributeName: 'fromId', KeyType: 'HASH' },
       { AttributeName: 'toId', KeyType: 'RANGE' }
@@ -176,15 +176,15 @@ const createFriends = (stage) => {
   });
 };
 
-const dropFriends = (stage) => {
+const dropFriends = () => {
   return drop({
-    TableName: `echt.${stage}.friends`
+    TableName: `echt.friends`
   });
 };
 
-const emptyFaces = (stage) => {
+const emptyFaces = () => {
   return dynamodb.scan({
-    TableName: `echt.${stage}.faces`
+    TableName: `echt.faces`
   })
     .promise()
     .then(data => {
@@ -201,7 +201,7 @@ const emptyFaces = (stage) => {
       if (requests.length) {
         return dynamodb.batchWriteItem({
           RequestItems: {
-            [`echt.${stage}.faces`]: requests
+            [`echt.faces`]: requests
           }
         }).promise();
       } else {

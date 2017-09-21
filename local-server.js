@@ -2,12 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const Automator = require('./tests/helpers/automator');
 const yargs = require('yargs')
-    .default('stage', 'uat')
     .argv;
 const qs = require('querystring');
-
-// Used in pseudo-lambda handlers
-global.ECHT_STAGE = yargs.stage;
 
 const a = new Automator();
 const app = express();

@@ -1,11 +1,11 @@
-const getStage = require('./get-stage');
 const raygun = require('raygun');
 const raygunClient = new raygun.Client().init({ apiKey: 't4ZsXM91R2CW+V5SfmxcrA==' });
+const config = require('../config');
 
 module.exports = function addErrorReporter (request) {
-  const stage = getStage(request.lambdaContext);
+  const env = config.environment;
 
-  if (stage !== 'uat') {
+  if (env === 'test') {
     return {};
   }
 

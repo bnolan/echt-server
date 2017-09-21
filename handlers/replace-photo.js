@@ -1,8 +1,5 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
-const getStage = require('../helpers/get-stage');
 const assert = require('assert');
 const config = require('../config');
 const addErrorReporter = require('../helpers/error-reporter');
@@ -31,8 +28,6 @@ exports.handler = function (request) {
 
   // const photoKey = request.body.photoKey;
 
-  global.stage = getStage(request.lambdaContext);
-
   assert(request.body.image, 'should have image');
   assert(request.body.uuid, 'should have uuid');
 
@@ -54,7 +49,7 @@ exports.handler = function (request) {
     const s3data = s3urls.fromUrl(photo.original.url);
 
     return S3.upload({
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       // Location doesn't change
       Key: s3data.Key,
       ContentType: 'image/jpeg',

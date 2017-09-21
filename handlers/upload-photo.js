@@ -1,8 +1,5 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
-const getStage = require('../helpers/get-stage');
 const resize = require('../helpers/resize');
 const _ = require('lodash');
 const assert = require('assert');
@@ -59,8 +56,6 @@ exports.handler = function (request) {
 
   // const photoKey = request.body.photoKey;
 
-  global.stage = getStage(request.lambdaContext);
-
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);
 
@@ -91,14 +86,14 @@ exports.handler = function (request) {
 
   return resize.toSmall(buffer).then((smallBuffer) => {
     var originalPhoto = {
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       Key: `photos/photo-${photo.uuid}.jpg`,
       ContentType: 'image/jpeg',
       Body: buffer
     };
 
     var smallPhoto = {
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       Key: `photos/photo-${photo.uuid}-small.jpg`,
       ContentType: 'image/jpeg',
       Body: smallBuffer

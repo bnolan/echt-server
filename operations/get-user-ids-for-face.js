@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 
 /**
@@ -13,7 +11,7 @@ module.exports = (faceId) => {
   // console.log(faceId);
 
   var params = {
-    TableName: `echt.${stage}.faces`,
+    TableName: `echt.faces`,
     KeyConditionExpression: 'faceId = :faceId',
     ExpressionAttributeValues: {
       ':faceId': faceId

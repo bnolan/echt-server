@@ -1,5 +1,6 @@
 const helper = require('../helpers/dynamodb');
 const config = require('../config');
+const assert = require('assert');
 
 process.on('unhandledRejection', (err) => {
   console.trace();
@@ -8,26 +9,25 @@ process.on('unhandledRejection', (err) => {
 
 // Only do this on test for now, don't want to accidentally
 // kill uat or production.
-const stages = [config.tapeTestStage];
 
-stages.forEach(stage => {
-  console.log(`# Recreating ${stages} databases...`);
-  console.log('Dropping tables...');
+assert(config.environment === 'test');
 
-  // Recreate database
-  helper
-    .dropUsers(stage)
-    .then(() => helper.dropPhotos(stage))
-    .then(() => helper.dropFaces(stage))
-    .then(() => helper.dropFriends(stage))
-    .then(() => {
-      console.log('Creating tables...');
-    })
-    .then(() => helper.createUsers(stage))
-    .then(() => helper.createPhotos(stage))
-    .then(() => helper.createFaces(stage))
-    .then(() => helper.createFriends(stage))
-    .then(() => {
-      console.log('Done recreating.');
-    });
-});
+console.log(`# Recreating databases...`);
+console.log('Dropping tables...');
+
+// Recreate database
+helper
+  .dropUsers()
+  .then(() => helper.dropPhotos())
+  .then(() => helper.dropFaces())
+  .then(() => helper.dropFriends())
+  .then(() => {
+    console.log('Creating tables...');
+  })
+  .then(() => helper.createUsers())
+  .then(() => helper.createPhotos())
+  .then(() => helper.createFaces())
+  .then(() => helper.createFriends())
+  .then(() => {
+    console.log('Done recreating.');
+  });

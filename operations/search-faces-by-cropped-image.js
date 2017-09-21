@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const resize = require('../helpers/resize');
 
@@ -15,7 +13,7 @@ module.exports = (faceRecord, buffer) => {
   return resize.cropByBoundingBox(buffer, faceRecord.BoundingBox)
     .then(croppedImageStr => {
       var params = {
-        CollectionId: `echt.${stage}`,
+        CollectionId: `echt.faces`,
         Image: {
           Bytes: new Buffer(croppedImageStr, 'base64')
         },

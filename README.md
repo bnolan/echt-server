@@ -20,7 +20,7 @@ Get your [credentials from aws](https://942514019561.signin.aws.amazon.com/conso
  * `yarn run release-dev`: Deploys the current code to dev
  * `yarn run release-uat`: Deploys the current code to UAT
  * `yarn run release-prod`: Deploys the current code to prod
- * `yarn run test`: Run all tests (interacts with AWS resources). You can run your own "stage" via `yarn run test -- --stage=<my-stage>` for integration tests.
+ * `yarn run test`: Run all tests (interacts with AWS resources). Make sure you run with AWS_PROFILE=echt-test
  * `yarn run test`: Run unit tests
  * `yarn run logs`: View Lambda logs
 
@@ -41,29 +41,24 @@ To update:
 You can run a simple local copy of the Lambda commands via `yarn run server`.
 It'll use the ClaudiaJS proxying system to use locally executed handlers
 instead of Lambda functions, but interact with the real AWS services.
-By default, it's using the `uat` stage.
-Force a different stage via `yarn run server -- --stage=dev-ingo`.
 
 In order to use a local server in the app, adjust the `endpoint` URL in `config.js`
 of the `echt-client` repo (set it to `http://localhost:3000`, without a trailing slash).
 
 ## Testing
 
-By default, the client will add new faces to the `uat` stage when run on the simulator
-or when connected to a local device. This stage is shared between developers,
+By default, the client will add new faces to the `uat` environment when run on the simulator
+or when connected to a local device. This environment is shared between developers,
 with a single users and faces database. Previous face recognitions of the same
-photo or person can mess up new signups. You can clear the `uat` database with
-the following command (add the `YESIMSURE=1` parameter):
-
-  node tasks/truncate-uat.js
+photo or person can mess up new signups.
   
- ## Multiple AWS accounts
+## Multiple AWS accounts
  
- The intention is to move to seperate AWS accounts (all slaved to a master echt
- account that pays the bill) for test, uat and production.
- 
- Test will be constantly modified and deleted by TravisCI or local end-to-end tests,
- the UAT environment will be stable and not deleted, but will have only data by
- Ingo and Ben. Beta users (of both the UAT and Prod iphone apps) will connect
- to the production environment which must be treated carefully as it contains user
- data.
+The intention is to move to seperate AWS accounts (all slaved to a master echt
+account that pays the bill) for test, uat and production.
+
+Test will be constantly modified and deleted by TravisCI or local end-to-end tests,
+the UAT environment will be stable and not deleted, but will have only data by
+Ingo and Ben. Beta users (of both the UAT and Prod iphone apps) will connect
+to the production environment which must be treated carefully as it contains user
+data.

@@ -6,18 +6,16 @@ const s3KeyFromUrl = require('../helpers/s3-key-from-url');
 /**
  * @param {String} photoId
  * @param {String} userId Can be owner or just a friend in the photo.
- * @param {String} stage
  * @return {Promise}
  */
-module.exports = (photoId, userId, stage) => {
+module.exports = (photoId, userId) => {
   assert(photoId, 'should have photoId');
   assert(userId, 'should have userId');
-  assert(stage, 'should have stage');
 
   var photos;
 
   const docClient = new AWS.DynamoDB.DocumentClient();
-  const tableName = `echt.${stage}.photos`;
+  const tableName = `echt.photos`;
   const params = {
     TableName: tableName,
     KeyConditionExpression: '#uuid = :photoId',
@@ -88,7 +86,7 @@ module.exports = (photoId, userId, stage) => {
       };
     });
     const params = {
-      Bucket: `echt.${stage}.${config.awsRegion}`,
+      Bucket: `echt.${config.environment}.${config.awsRegion}`,
       Delete: {
         Objects: objects
       }

@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const assert = require('assert');
 
@@ -14,7 +12,7 @@ const assert = require('assert');
  */
 module.exports = (photo, userIds) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
-  const tableName = `echt.${stage}.photos`;
+  const tableName = `echt.photos`;
 
   assert(photo.uuid, 'should have photo uuid');
   assert(photo.authorId, 'should have photo authorId');

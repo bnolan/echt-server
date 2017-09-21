@@ -83,7 +83,7 @@ test('owner can delete a photo from everyone\'s feed', function (t) {
     photos: photos
   });
 
-  deletePhoto(photos[0].uuid, authorId, 'my-stage').then((result) => {
+  deletePhoto(photos[0].uuid, authorId).then((result) => {
     t.ok(batchWriteStub.calledOnce);
     const request = batchWriteStub.getCall(0).args[0].RequestItems;
     const tableName = Object.keys(request)[0];
@@ -115,7 +115,7 @@ test('friend can only delete a photo from their own feed', function (t) {
     photos: photos
   });
 
-  deletePhoto(photos[0].uuid, friends[0].uuid, 'my-stage').then((result) => {
+  deletePhoto(photos[0].uuid, friends[0].uuid).then((result) => {
     t.ok(batchWriteStub.calledOnce);
     const request = batchWriteStub.getCall(0).args[0].RequestItems;
     const tableName = Object.keys(request)[0];
@@ -138,7 +138,7 @@ test('unrelated user can not delete photo', function (t) {
     photos: photos
   });
 
-  deletePhoto(photos[0].uuid, 'other-user', 'my-stage').catch(err => {
+  deletePhoto(photos[0].uuid, 'other-user').catch(err => {
     t.equals(err.message, 'User not in photo');
     t.end();
   });
@@ -153,7 +153,7 @@ test('photo not found', function (t) {
     photos: photos
   });
 
-  deletePhoto('not-found', authorId, 'my-stage').catch(err => {
+  deletePhoto('not-found', authorId).catch(err => {
     t.equals(err.message, 'No photos found');
     t.end();
   });

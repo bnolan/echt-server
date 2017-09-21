@@ -1,5 +1,3 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 
 /**
@@ -13,7 +11,7 @@ module.exports = (photoId) => {
   var docClient = new AWS.DynamoDB.DocumentClient();
 
   var params = {
-    TableName: `echt.${stage}.photos`,
+    TableName: `echt.photos`,
     KeyConditionExpression: '#uuid = :photoId',
     ExpressionAttributeValues: {
       ':photoId': photoId

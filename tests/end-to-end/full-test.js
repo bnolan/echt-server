@@ -10,22 +10,21 @@ const dynamodbHelper = require('../../helpers/dynamodb');
 const rekognitionHelper = require('../../helpers/rekognition');
 const resizeHelper = require('../../helpers/resize');
 const config = require('../../config');
-const yargs = require('yargs').argv;
 const uuid = require('uuid/v4');
+const assert = require('assert');
 
 // End-to-end test use the uat databases
-const stage = yargs.stage ? yargs.stage : config.tapeTestStage;
-global.ECHT_STAGE = stage;
+assert(config.environment === 'test');
 
 test('🔥  empty collection', (t) => {
-  rekognitionHelper.emptyCollection(stage)
+  rekognitionHelper.emptyCollection()
     .then(() => {
       t.end();
     });
 });
 
 test('⚡️  empty table', (t) => {
-  dynamodbHelper.emptyFaces(stage)
+  dynamodbHelper.emptyFaces()
     .then(() => {
       t.end();
     });

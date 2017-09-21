@@ -1,7 +1,4 @@
-/* globals stage */
-
 var AWS = require('aws-sdk');
-const getStage = require('../helpers/get-stage');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const config = require('../config');
@@ -20,11 +17,9 @@ exports.handler = (request) => {
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);
 
-  global.stage = getStage(request.lambdaContext);
-
   const params = {
-    TableName: `echt.${stage}.photos`,
-    IndexName: `echt.${stage}.photosByUserId`,
+    TableName: `echt.photos`,
+    IndexName: `echt.photosByUserId`,
     KeyConditionExpression: 'userId = :id',
     ScanIndexForward: false, // sort descending by createdAt
     ExpressionAttributeValues: {

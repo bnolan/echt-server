@@ -4,8 +4,7 @@ const Automator = require('../tests/helpers/automator');
 const jwt = require('jsonwebtoken');
 const yargs = require('yargs')
   .usage('Creates a sample user with the provided image, in registered status')
-  .demandOption(['stage', 'selfiePath'])
-  .describe('stage', 'AWS "stage"')
+  .demandOption(['selfiePath'])
   .describe('selfiePath', 'Path to a selfie JPG')
   .describe('name', 'Optional name')
   .describe('keys', 'Comma-separated list of device keys to establish friendships with')
@@ -15,8 +14,6 @@ process.on('unhandledRejection', (reason, p) => {
   console.log(JSON.stringify(reason));
   console.log(JSON.stringify(p));
 });
-
-global.ECHT_STAGE = yargs.stage;
 
 const selfiePath = yargs.selfiePath;
 const name = yargs.name;

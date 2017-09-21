@@ -1,8 +1,5 @@
-/* globals stage */
-
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
-const getStage = require('../helpers/get-stage');
 const STATUS = require('../constants').STATUS;
 const config = require('../config');
 const assert = require('assert');
@@ -19,7 +16,6 @@ exports.handler = function (request) {
   const errorHandlers = addErrorReporter(request);
 
   // const photoKey = request.body.photoKey;
-  global.stage = getStage(request.lambdaContext);
 
   // fixme - use verify with a key
   const deviceKey = jwt.decode(request.headers['x-devicekey']);
@@ -49,12 +45,12 @@ exports.handler = function (request) {
       fromId: requester,
       toId: recipient,
       requester: true
-    }), stage),
+    })),
     storeFriend(Object.assign({}, base, {
       fromId: recipient,
       toId: requester,
       requester: false
-    }), stage)
+    }))
   ]).then(() => {
     return {
       success: true,

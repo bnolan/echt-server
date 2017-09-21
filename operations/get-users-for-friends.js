@@ -1,5 +1,3 @@
-/* global stage */
-
 const AWS = require('aws-sdk');
 
 /**
@@ -7,7 +5,7 @@ const AWS = require('aws-sdk');
  * @return {Array} Matching users records
  */
 module.exports = (friendIds) => {
-  const table = `echt.${stage}.users`;
+  const table = `echt.users`;
 
   if (!friendIds.length) {
     return [];

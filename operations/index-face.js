@@ -1,5 +1,3 @@
-/* global stage */
-
 const AWS = require('aws-sdk');
 const config = require('../config');
 
@@ -13,11 +11,11 @@ const config = require('../config');
 module.exports = (objectKey) => {
   var rekognitionClient = new AWS.Rekognition();
   var params = {
-    CollectionId: `echt.${stage}`,
+    CollectionId: `echt.faces`,
     Image: {
       S3Object: {
         // Ensure photos can only be selected from a location we control
-        Bucket: `echt.${stage}.${config.awsRegion}`,
+        Bucket: `echt.${config.environment}.${config.awsRegion}`,
         Name: objectKey
       }
     }
