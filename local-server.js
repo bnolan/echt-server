@@ -1,8 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 const Automator = require('./tests/helpers/automator');
-const yargs = require('yargs')
-    .argv;
 const qs = require('querystring');
 
 const a = new Automator();

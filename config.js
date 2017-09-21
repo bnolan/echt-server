@@ -1,4 +1,4 @@
 module.exports = {
   awsRegion: 'us-west-2',
-  environment: NODE_ENV['AWS_TODO'] || 'test'
+  environment: process.env.ECHT_ENVIRONMENT || 'test'
 };
