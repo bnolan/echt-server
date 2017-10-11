@@ -9,6 +9,13 @@ Relies on https://github.com/bnolan/echt-client
 
 Run `yarn`
 
+## Terraform
+
+Requires terraform 0.10
+
+	cd terraform
+	AWS_PROFILE=echt-test terraform apply
+
 ## Usage
 
 You'll need to [configure AWS access credentials](https://claudiajs.com/tutorials/installing.html). In case you're not using the default profile,
