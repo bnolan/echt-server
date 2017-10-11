@@ -10,9 +10,9 @@
     "release-uat": "claudia update --version uat --use-s3-bucket echt-deploys.us-west-2",
     "release-prod": "claudia update --version prod --use-s3-bucket echt-deploys.us-west-2",
     "truncate-uat": "node tasks/truncate-uat.js",
-    "test": "tape -r ./tests/bootstrap tests/**/*-test.js",
-    "test-unit": "tape -r ./tests/bootstrap tests/unit/*-test.js",
-    "test-end-to-end": "tape -r ./tests/bootstrap tests/end-to-end/*-test.js",
+    "test": "tape tests/**/*-test.js",
+    "test-unit": "tape tests/unit/*-test.js",
+    "test-end-to-end": "tape tests/end-to-end/*-test.js",
     "lint": "semistandard",
     "logs": "open https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#logEventViewer:group=/aws/lambda/echt",
     "aws-console": "open https://942514019561.signin.aws.amazon.com/console"
