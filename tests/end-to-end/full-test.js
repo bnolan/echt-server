@@ -15,7 +15,7 @@ const assert = require('assert');
 
 // End-to-end test use the uat databases
 assert(config.environment === 'test', 'Environment is not test');
-assert(process.env.AWS_PROFILE, 'AWS_PROFILE is not set');
+assert(process.env.CIRCLECI || process.env.AWS_PROFILE, 'AWS_PROFILE is not set');
 
 test('🔥  empty collection', (t) => {
   rekognitionHelper.emptyCollection()
