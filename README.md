@@ -11,10 +11,23 @@ Run `yarn`
 
 ## Terraform
 
-Requires terraform 0.10
+Requires terraform 0.11.
 
-	cd terraform
-	AWS_PROFILE=echt-test terraform apply
+First you need to create the s3 bucket that holds the terraform config (so that
+we don't have to commit the config to git as tfstate files). The bucket name is 
+here:
+
+    terraform {
+      backend "s3" {
+        bucket = "echt-test-terraform"
+
+You can create the bucket by hand in the AWS web console. Enable versioning, and
+don't enable public access.
+
+Now you can terraform:
+
+    cd terraform
+    AWS_PROFILE=echt-test terraform apply
 
 ## Usage
 
@@ -58,6 +71,8 @@ By default, the client will add new faces to the `uat` environment when run on t
 or when connected to a local device. This environment is shared between developers,
 with a single users and faces database. Previous face recognitions of the same
 photo or person can mess up new signups.
+
+I added an assert so it checks you set an `AWS_PROFILE` before running the tests.
   
 ## Multiple AWS accounts
  

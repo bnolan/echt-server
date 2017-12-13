@@ -15,7 +15,7 @@ const assert = require('assert');
 
 // End-to-end test use the uat databases
 assert(config.environment === 'test', 'Environment is not test');
-assert(process.env.AWS_PROFILE, 'AWS_PROFILE it not set');
+assert(process.env.AWS_PROFILE, 'AWS_PROFILE is not set');
 
 test('🔥  empty collection', (t) => {
   rekognitionHelper.emptyCollection()
@@ -306,7 +306,7 @@ test('🏊  full user flow', (t) => {
     // Ingo can see the selfie ben took of them both
 
     t.test('get newsfeed', (t) => {
-      t.plan(4);
+      t.plan(5);
 
       a.get('/photos', {}, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
@@ -317,7 +317,7 @@ test('🏊  full user flow', (t) => {
         t.equal(r.items[1].author.uuid, ingo.user.uuid);
 
         // Should be no actions on this because it's not my photo
-        t.equal(r.items[0].actions.length, 0);
+        t.ok(!r.items[0].actions);
       });
     });
 
@@ -332,18 +332,6 @@ test('🏊  full user flow', (t) => {
       a.post('/photos', { image: b64, uuid: hashigoId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
         t.ok(r.success);
         t.ok(r.photo);
-      });
-    });
-
-    t.test('try and re upload hashigo', (t) => {
-      t.plan(2);
-
-      const image = fs.readFileSync(path.join(__dirname, '../fixtures/hashigo.jpg'));
-      const b64 = new Buffer(image).toString('base64');
-
-      a.post('/photos', { image: b64, uuid: hashigoId, camera: CAMERA.FRONT_FACING }, { 'x-devicekey': ingo.deviceKey }).then(r => {
-        t.ok(!r.success);
-        t.ok(!r.photo);
       });
     });
 
