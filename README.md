@@ -84,3 +84,7 @@ the UAT environment will be stable and not deleted, but will have only data by
 Ingo and Ben. Beta users (of both the UAT and Prod iphone apps) will connect
 to the production environment which must be treated carefully as it contains user
 data.
+
+The `test` environment doesn't have any lambdas in it, since it is just tested by
+locally running `npm run test` or by circleci. The `test` environment only has
+dynamo tables, reckognition collections and s3 buckets.
