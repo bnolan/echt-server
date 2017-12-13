@@ -11,6 +11,14 @@ variable "region" {
 # variable "route53_domain_alias_name" {}
 # variable "route53_domain_alias_zoneid" {}
 
+terraform {
+  backend "s3" {
+    bucket = "echt-test-terraform"
+    key    = "terraform-state"
+    region = "us-west-2"
+  }
+}
+
 provider "aws" {
     region = "${var.region}"
 }
@@ -36,6 +44,12 @@ resource "aws_s3_bucket" "site" {
 }
 EOF
     force_destroy = true
+}
+
+resource "null_resource" "create-rekognition-collections" {
+    provisioner "local-exec" {
+        command = "aws rekognition create-collection --collection-id echt.faces"
+    }
 }
 
 # resource "aws_route53_record" "domain" {

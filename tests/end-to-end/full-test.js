@@ -14,7 +14,8 @@ const uuid = require('uuid/v4');
 const assert = require('assert');
 
 // End-to-end test use the uat databases
-assert(config.environment === 'test');
+assert(config.environment === 'test', 'Environment is not test');
+assert(process.env.AWS_PROFILE, 'AWS_PROFILE it not set');
 
 test('🔥  empty collection', (t) => {
   rekognitionHelper.emptyCollection()
