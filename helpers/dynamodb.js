@@ -8,10 +8,6 @@ AWS.config.update({
 
 var dynamodb = new AWS.DynamoDB();
 
-function drop (params, callback) {
-  return dynamodb.deleteTable(params).promise();
-}
-
 const emptyFaces = () => {
   return dynamodb.scan({
     TableName: `echt.faces`
