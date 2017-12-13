@@ -1,12 +1,11 @@
 {
   "lambda": {
-    "role": "echt-executor",
-    "name": "echt",
-    "region": "us-west-2",
-    "timeout": 100
+    "role": "echt-server-executor",
+    "name": "echt-server",
+    "region": "us-west-2"
   },
   "api": {
-    "id": "xypqnmu05f",
+    "id": "jtwxgv1he9",
     "module": "app"
   }
 }

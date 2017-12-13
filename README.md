@@ -99,3 +99,15 @@ Specify the environment like so:
 
 We might want to write a `Makefile` or some bash scripts tthat automate changing terraform 
 init. There may be a way to fix the repeated `init` using terraform workspaces.
+
+### Deploying lambdas to production
+
+Initialize claudia (only have to do for new environments, the `claudia.json` in this
+repo is the production one), this command creates an IAM role that isn't managed by
+terraform:
+
+    AWS_PROFILE=echt-production claudia create --use-s3-bucket echt-production-lambda --region us-west-2 --api-module app
+
+Deploying claudia:
+
+    AWS_PROFILE=echt-production claudia update --use-s3-bucket echt-production-lambda

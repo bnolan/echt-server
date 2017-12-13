@@ -47,6 +47,11 @@ EOF
     force_destroy = true
 }
 
+resource "aws_s3_bucket" "s3-lambda" {
+    bucket = "echt-${var.environment}-lambda"
+    force_destroy = true
+}
+
 resource "null_resource" "create-rekognition-collections" {
     provisioner "local-exec" {
         command = "aws rekognition create-collection --collection-id echt.faces --region ${var.region}"
