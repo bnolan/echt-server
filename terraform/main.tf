@@ -1,8 +1,10 @@
 variable "environment" {
+  type    = "string"
   default = "test"
 }
 
 variable "region" {
+  type    = "string"
   default = "us-west-2"
 }
 
@@ -13,7 +15,6 @@ variable "region" {
 
 terraform {
   backend "s3" {
-    bucket = "echt-test-terraform"
     key    = "terraform-state"
     region = "us-west-2"
   }
@@ -48,7 +49,7 @@ EOF
 
 resource "null_resource" "create-rekognition-collections" {
     provisioner "local-exec" {
-        command = "aws rekognition create-collection --collection-id echt.faces"
+        command = "aws rekognition create-collection --collection-id echt.faces --region ${var.region}"
     }
 }
 

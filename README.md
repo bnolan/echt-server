@@ -9,26 +9,6 @@ Relies on https://github.com/bnolan/echt-client
 
 Run `yarn`
 
-## Terraform
-
-Requires terraform 0.11.
-
-First you need to create the s3 bucket that holds the terraform config (so that
-we don't have to commit the config to git as tfstate files). The bucket name is 
-here:
-
-    terraform {
-      backend "s3" {
-        bucket = "echt-test-terraform"
-
-You can create the bucket by hand in the AWS web console. Enable versioning, and
-don't enable public access.
-
-Now you can terraform:
-
-    cd terraform
-    AWS_PROFILE=echt-test terraform apply
-
 ## Usage
 
 You'll need to [configure AWS access credentials](https://claudiajs.com/tutorials/installing.html). In case you're not using the default profile,
@@ -88,3 +68,34 @@ data.
 The `test` environment doesn't have any lambdas in it, since it is just tested by
 locally running `npm run test` or by circleci. The `test` environment only has
 dynamo tables, reckognition collections and s3 buckets.
+
+## Terraform
+
+Requires terraform 0.11.
+
+First you need to create the s3 bucket that holds the terraform config (so that
+we don't have to commit the config to git as tfstate files). The bucket name is:
+
+    echt-${env}-terraform
+
+You can create the bucket by hand in the AWS web console. Enable versioning, and
+don't enable public access.
+
+Now you can terraform:
+
+### Terraforming test
+
+Like so:
+
+    AWS_PROFILE=echt-test terraform init -backend-config="bucket=echt-test-terraform"
+    AWS_PROFILE=echt-test terraform apply
+
+### Terraforming production
+
+Specify the environment like so:
+
+    AWS_PROFILE=echt-production terraform init -backend-config="bucket=echt-production-terraform"
+    TF_VAR_environment=production AWS_PROFILE=echt-production terraform apply
+
+We might want to write a `Makefile` or some bash scripts tthat automate changing terraform 
+init. There may be a way to fix the repeated `init` using terraform workspaces.
